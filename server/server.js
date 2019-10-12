@@ -5,10 +5,10 @@ import cors from 'cors'
 import bodyParser from 'body-parser';
 import sockjs from 'sockjs';
 import faker from 'faker';
+import fs from 'fs';
 import cookieParser from 'cookie-parser'
 import Html from '../client/html';
 import Variables from '../client/variables';
-
 
 let connections = [];
 const clientVariables = Object.keys(process.env)
@@ -66,11 +66,28 @@ const getFakerUser = () => {
 }
 
 server.get('/api/users/', (req, res) => {
-  res.json(
-    new Array(10).fill(null).map(getFakerUser)
+  const fileName = `${__dirname}/tmp/data.json`;
+  fs.readFile(
+    fileName,
+    (err, data) => {
+      if (!err) {
+        return res.json(
+          JSON.parse(data)
+        )
+      }
+      const dataGenerated = new Array(10).fill(null).map(getFakerUser);
+      return fs.writeFile(
+        fileName,
+        JSON.stringify(dataGenerated),
+        () => {
+          res.json(
+            dataGenerated
+          )
+        }
+      )
+    }
   )
 });
-
 
 server.get('/', (req, res) => {
   // const body = renderToString(<Root />);
