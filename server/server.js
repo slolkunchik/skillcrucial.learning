@@ -4,7 +4,7 @@ import path from 'path';
 import cors from 'cors'
 import bodyParser from 'body-parser';
 import sockjs from 'sockjs';
-
+import faker from 'faker';
 import cookieParser from 'cookie-parser'
 import Html from '../client/html';
 import Variables from '../client/variables';
@@ -27,10 +27,10 @@ server.use(bodyParser.json({ limit: '50mb', extended: true }))
 
 server.use(cookieParser());
 
-server.use('/api/', (req, res) => {
-  res.status(404);
-  res.end();
-});
+// server.use('/api/', (req, res) => {
+//   res.status(404);
+//   res.end();
+// });
 
 const echo = sockjs.createServer();
 echo.on('connection', (conn) => {
@@ -50,6 +50,27 @@ server.get('/js/variables.js', (req, res) => {
     })
   );
 });
+
+const getFakerUser = () => {
+  return {
+    name: faker.name.findName(),
+    surname: faker.name.lastName(),
+    city: faker.address.city(),
+    country: faker.address.country(),
+    company: faker.company.companyName(),
+    title: faker.name.title(),
+    product: faker.commerce.product(),
+    salaryAmount: faker.finance.amount(),
+    card: faker.helpers.createCard(),
+  }
+}
+
+server.get('/api/users/', (req, res) => {
+  res.json(
+    new Array(10).fill(null).map(getFakerUser)
+  )
+});
+
 
 server.get('/', (req, res) => {
   // const body = renderToString(<Root />);
