@@ -42,7 +42,7 @@ const config = {
     },
     proxy: [
       {
-        context: ['/api', '/auth', '/ws', '/js/variables.js', '/sockjs-node'],
+        context: ['/api', '/auth', '/ws', '/tracker', '/js/variables.js', '/sockjs-node'],
         target: 'http://localhost:3000',
         secure: false,
         changeOrigin: true,
